@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@clerk/nextjs": "^6.10.3",
+    "@eslint/eslintrc": "^3.3.1",
     "@libsql/client": "^0.9.0",
     "@radix-ui/react-slot": "^1.1.1",
     "@t3-oss/env-nextjs": "^0.10.1",
@@ -37,6 +38,7 @@
     "react-dom": "^19.0.0",
     "tailwind-merge": "^2.6.0",
     "tailwindcss-animate": "^1.0.7",
+    "typescript-eslint": "^8.34.0",
     "uploadthing": "^7.4.4",
     "zod": "^3.23.3"
   },
