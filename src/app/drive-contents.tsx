@@ -7,7 +7,7 @@ import { Button } from "~/components/ui/button"
 import { FileRow, FolderRow } from "./file-row"
 import type { files, folders } from "~/server/db/schema"
 
-export default function GoogleDriveClone(props: {
+export default function DriveContents(props: {
     files: (typeof files.$inferSelect)[];
     folders: (typeof folders.$inferSelect)[]
 }) {
