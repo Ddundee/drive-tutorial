@@ -1,28 +1,42 @@
-import { db } from "~/server/db"
-import { files_table as filesSchema, folders_table as foldersSchema } from "~/server/db/schema"
-import DriveContents from "~/app/drive-contents"
-import { z } from "zod"
-import { eq } from "drizzle-orm"
+import "server-only";
 
-export async function getAllParentsForFolder(folderId: number) {
-    const parents = [];
-    let currentId: number | null = folderId;
-    while (currentId !== null) {
-        const folder = await db.select().from(foldersSchema).where(eq(foldersSchema.id, currentId))
+import { db } from "~/server/db";
+import {
+	files_table as filesSchema,
+	folders_table as foldersSchema,
+} from "~/server/db/schema";
+import { eq } from "drizzle-orm";
 
-        if (!folder[0]) {
-            break;
-        }
+export const QUERIES = {
+	getAllParentsForFolder: async function (folderId: number) {
+		const parents = [];
+		let currentId: number | null = folderId;
+		while (currentId !== null) {
+			const folder = await db
+				.select()
+				.from(foldersSchema)
+				.where(eq(foldersSchema.id, currentId));
 
-        parents.unshift(folder[0]);
-        currentId = folder[0]?.parent;
-    }
-    return parents;
-}
+			if (!folder[0]) {
+				break;
+			}
 
-export function getFolders(folderId: number) {
-    return db.select().from(foldersSchema).where(eq(foldersSchema.parent, folderId))
-}
-export function getFiles(fileId: number) {
-    return db.select().from(filesSchema).where(eq(filesSchema.parent, fileId))
-}
+			parents.unshift(folder[0]);
+			currentId = folder[0]?.parent;
+		}
+		return parents;
+	},
+
+	getFolders: function (folderId: number) {
+		return db
+			.select()
+			.from(foldersSchema)
+			.where(eq(foldersSchema.parent, folderId));
+	},
+	getFiles: function (fileId: number) {
+		return db
+			.select()
+			.from(filesSchema)
+			.where(eq(filesSchema.parent, fileId));
+	},
+};
