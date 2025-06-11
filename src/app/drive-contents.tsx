@@ -11,11 +11,6 @@ export default function DriveContents(props: {
     folders: (typeof folders_table.$inferSelect)[];
     parents: (typeof folders_table.$inferSelect)[];
 }) {
-    // const breadcrumbs: unknown = []
-
-    const handleUpload = () => {
-        alert("Upload functionality would be implemented here");
-    };
 
     return (
         <div className="min-h-screen bg-gray-900 p-8 text-gray-100">
