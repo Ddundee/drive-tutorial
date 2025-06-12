@@ -49,6 +49,7 @@ export const ourFileRouter = {
 					ownerId: metadata.userId,
 					name: file.name,
 					size: file.size,
+					fileKey: file.key,
 					url: file.url,
 					parent: metadata.parentId,
 				},
