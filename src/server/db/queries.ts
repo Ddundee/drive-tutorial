@@ -7,7 +7,6 @@ import {
 	type DB_FileType,
 } from "~/server/db/schema";
 import { eq } from "drizzle-orm";
-import type { z } from "zod";
 
 export const QUERIES = {
 	getAllParentsForFolder: async function (folderId: number) {
