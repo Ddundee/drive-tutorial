@@ -7,11 +7,13 @@
 - [x] Add auth
 - [x] Add file uploading
 - [x] Add analytics
-- [ ] Homepage + onboarding
+- [x] Homepage + onboarding
 
 ## hw
 
-- [ ] setup filekey for utapi access
-- [ ] setup proper file/folder deletion
-- [ ] setup file type display in table
-- [ ] sonner
+- [x] setup filekey for utapi access
+- [x] folder creation
+- [x] setup proper file/folder deletion
+- [x] setup file type display in table
+- [x] onboard user using a transaction
+- [x] sonner

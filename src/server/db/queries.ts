@@ -68,9 +68,17 @@ export const MUTATIONS = {
 		file: Omit<DB_FileType, "id" | "createdAt">;
 		userId: string;
 	}) {
-		return await db.insert(filesSchema).values({
-			...input.file,
-			parent: input.file.parent,
-		});
+		return await db.insert(filesSchema).values(input.file);
+	},
+
+	onboardUser: async function (userId: string) {
+		const rootFolder = await db
+			.insert(foldersSchema)
+			.values({ name: "Root", parent: null, ownerId: userId })
+			.$returningId();
+
+		const rootFolderId = rootFolder[0]!.id;
+
+		return rootFolderId;
 	},
 };

@@ -6,6 +6,7 @@ import {
     ClerkProvider,
 } from '@clerk/nextjs'
 import { PostHogProvider } from "./_providers/posthog-provider";
+import { Toaster } from "~/components/ui/sonner";
 
 export const metadata: Metadata = {
     title: "Drive Tutorial",
@@ -27,6 +28,7 @@ export default function RootLayout({
                 <body>
                     <PostHogProvider>
                         {children}
+                        <Toaster />
                     </PostHogProvider>
                 </body>
             </html>

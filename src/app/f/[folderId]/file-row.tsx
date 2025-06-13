@@ -1,9 +1,11 @@
 import { Folder as FolderIcon, FileIcon, Trash2Icon } from "lucide-react";
 import Link from "next/link";
 import { Button } from "~/components/ui/button";
-import { deleteFile } from "~/server/actions";
+import { deleteFile, deleteFolder } from "~/server/actions";
+import prettyBytes from "pretty-bytes"
 
 import type { folders_table, files_table } from "~/server/db/schema";
+import { toast } from "sonner";
 
 export function FileRow(props: { file: typeof files_table.$inferSelect }) {
     const { file } = props;
@@ -22,9 +24,15 @@ export function FileRow(props: { file: typeof files_table.$inferSelect }) {
                         {file.name}
                     </Link>
                 </div>
-                <div className="col-span-2 text-gray-400">{"file"}</div>
-                <div className="col-span-2 text-gray-400">{file.size}</div>
-                <div className="col-span-2 text-gray-400"><Button variant={"destructive"} onClick={() => deleteFile(file.id)}><Trash2Icon className="" size={20} /></Button></div>
+                <div className="col-span-2 text-gray-400">{file.fileType}</div>
+                <div className="col-span-2 text-gray-400">{prettyBytes(file.size)}</div>
+                <div className="col-span-2 text-gray-400"><Button variant={"destructive"} onClick={() => {
+                    toast.loading("Deleting file...", { id: `file-delete-${props.file.id}` })
+                    deleteFile(file.id)
+                        .catch(() => toast.error("Unable to delete file.", { id: `file-delete-${props.file.id}` }))
+                        .then(() => toast.success("Deleted file!", { id: `file-delete-${props.file.id}` }))
+
+                }}><Trash2Icon className="" size={20} /></Button></div>
             </div>
         </li>
     );
@@ -52,6 +60,13 @@ export function FolderRow(props: {
                 </div>
                 <div className="col-span-2 text-gray-400"></div>
                 <div className="col-span-2 text-gray-400"></div>
+                <div className="col-span-2 text-gray-400"><Button variant={"destructive"} onClick={() => {
+                    toast.loading("Deleting folder...", { id: `folder-delete-${props.folder.id}` })
+                    deleteFolder(folder.id)
+                        .catch(() => toast.error("Unable to delete folder.", { id: `folder-delete-${props.folder.id}` }))
+                        .then(() => toast.success("Deleted folder!", { id: `folder-delete-${props.folder.id}` }))
+
+                }}><Trash2Icon className="" size={20} /></Button></div>
             </div>
         </li>
     );

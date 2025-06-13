@@ -12,8 +12,7 @@ export default async function Page() {
     if (!user.userId) {
         throw new Error("User not found")
     }
-    const folders = await db.select().from(folders_table).where(eq(folders_table.ownerId, user.userId))
-    console.log(folders)
+    await db.select().from(folders_table).where(eq(folders_table.ownerId, user.userId))
 
     return (
         <div>
@@ -31,14 +30,13 @@ export default async function Page() {
                     ownerId: user.userId,
                     parent: null,
                 }).$returningId()
-                console.log("root id", rootFolder[0]!.id)
 
                 const insertableFolder = mockFolders.map((folder) => ({
                     name: folder.name,
                     ownerId: user.userId,
                     parent: rootFolder[0]!.id
                 }))
-                console.log("insert mock folders", insertableFolder)
+
                 await db.insert(folders_table).values(insertableFolder)
             }}>
                 <Button type="submit">Create Folders</Button>

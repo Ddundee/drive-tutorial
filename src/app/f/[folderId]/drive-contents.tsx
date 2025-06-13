@@ -1,12 +1,13 @@
 "use client";
-
-import { ChevronRight } from "lucide-react";
+import { Fragment } from "react";
 import { FileRow, FolderRow } from "./file-row";
 import type { files_table, folders_table } from "~/server/db/schema";
-import Link from "next/link";
 import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
 import { UploadButton } from "~/components/uploadthing";
 import { useRouter } from "next/navigation";
+import NewFolder from "~/components/new-folder";
+import { Breadcrumb, BreadcrumbEllipsis, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbSeparator } from "~/components/ui/breadcrumb";
+import { toast } from "sonner";
 
 export default function DriveContents(props: {
     files: (typeof files_table.$inferSelect)[];
@@ -22,28 +23,73 @@ export default function DriveContents(props: {
             <div className="mx-auto max-w-6xl">
                 <div className="mb-6 flex items-center justify-between">
                     <div className="flex items-center">
-                        <Link
-                            href="/f/1"
-                            className="mr-2 text-gray-300 hover:text-white"
-                        >
-                            My Drive
-                        </Link>
-                        {props.parents.map((folder) => (
-                            <div key={folder.id} className="flex items-center">
-                                <ChevronRight
-                                    className="mx-2 text-gray-500"
-                                    size={16}
-                                />
-                                <Link
-                                    href={`/f/${folder.id}`}
-                                    className="text-gray-300 hover:text-white"
-                                >
-                                    {folder.name}
-                                </Link>
-                            </div>
-                        ))}
+                        <Breadcrumb>
+                            <BreadcrumbList>
+                                <BreadcrumbItem>
+                                    <BreadcrumbLink href={`/f/${props.parents[0]!.id}`} className="text-gray-300 hover:text-white">My Drive</BreadcrumbLink>
+                                </BreadcrumbItem>
+                                {props.parents.slice(1, 2).map((folder) => (
+                                    // <div key={folder.id} className="flex items-center">
+                                    //     <ChevronRight
+                                    //         className="mx-2 text-gray-500"
+                                    //         size={16}
+                                    //     />
+                                    //     <Link
+                                    //         href={`/f/${folder.id}`}
+                                    //         className="text-gray-300 hover:text-white"
+                                    //     >
+                                    //         {folder.name}
+                                    //     </Link>
+                                    // </div>
+                                    <Fragment key={folder.id}>
+                                        <BreadcrumbSeparator />
+                                        <BreadcrumbItem>
+                                            <BreadcrumbLink href={`/f/${folder.id}`} className="text-gray-300 hover:text-300">{folder.name}</BreadcrumbLink>
+                                        </BreadcrumbItem>
+                                    </Fragment>
+                                ))}
+                                {
+                                    props.parents.length > 3 &&
+                                    <Fragment>
+                                        <BreadcrumbSeparator />
+                                        <BreadcrumbItem>
+                                            <BreadcrumbEllipsis />
+                                        </BreadcrumbItem>
+                                        <BreadcrumbSeparator />
+                                        <BreadcrumbItem>
+                                            <BreadcrumbLink href={`/f/${props.parents[props.parents.length - 1]?.id}`} className="text-gray-300 hover:text-300">{props.parents[props.parents.length - 1]?.name}</BreadcrumbLink>
+                                        </BreadcrumbItem>
+                                    </Fragment>
+                                }
+                                {
+                                    props.parents.length === 3 &&
+                                    <Fragment>
+                                        <BreadcrumbSeparator />
+                                        <BreadcrumbItem>
+                                            <BreadcrumbLink href={`/f/${props.parents[props.parents.length - 1]?.id}`} className="text-gray-300 hover:text-300">{props.parents[props.parents.length - 1]?.name}</BreadcrumbLink>
+                                        </BreadcrumbItem>
+                                    </Fragment>
+                                }
+
+                            </BreadcrumbList>
+                        </Breadcrumb>
                     </div>
-                    <div>
+                    <div className="flex gap-3 justify-center items-center">
+                        <UploadButton endpoint="driveUploader" onClientUploadComplete={() => {
+                            navigate.refresh()
+                            toast.success("Uploaded files!", { id: "upload-file" })
+                        }} input={{ folderId: props.currentFolderId }} onUploadBegin={() => toast.loading("Uploading file(s)...", { id: "upload-file" })} onUploadAborted={() => { toast.error("Unable to upload file", { id: "upload-file" }) }} onUploadError={() => { toast.error("Unable to upload file", { id: "upload-file" }) }} />
+                        {/* <form action={() => {
+                            createFolder({
+                                folder: {
+                                    name: `test${Math.round(Math.random() * 100)}`,
+                                    parent: props.parents[props.parents.length - 1]!.id
+                                }
+                            })
+                        }}>
+                            <Button variant={"secondary"} type="submit">New Folder</Button>
+                        </form> */}
+                        <NewFolder parentId={props.parents[props.parents.length - 1]!.id} />
                         <SignedOut>
                             <SignInButton />
                         </SignedOut>
@@ -70,7 +116,6 @@ export default function DriveContents(props: {
                         ))}
                     </ul>
                 </div>
-                <UploadButton endpoint="driveUploader" onClientUploadComplete={() => { navigate.refresh() }} input={{ folderId: props.currentFolderId }} />
             </div>
         </div>
     );
